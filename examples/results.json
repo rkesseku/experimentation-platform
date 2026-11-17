@@ -1,0 +1,145 @@
+{
+  "peeking": {
+    "seed": 2026,
+    "null_known_variance": {
+      "fixed": 0.04905,
+      "naive_peeking": 0.32155,
+      "msprt": 0.0168,
+      "obf": 0.0482,
+      "msprt_mean_stop_fraction": 0.2521428571428571,
+      "n_sims": 20000,
+      "n_looks": 50,
+      "effect": 0.0,
+      "obf_bounds": [
+        4.382612702884385,
+        3.09972747758988,
+        2.5533549726171345,
+        2.253847898334322,
+        2.063501103569256
+      ]
+    },
+    "alt_known_variance_effect_0.1": {
+      "fixed": 0.99875,
+      "naive_peeking": 0.9995,
+      "msprt": 0.98245,
+      "obf": 0.9988,
+      "msprt_mean_stop_fraction": 0.3643727416153494,
+      "n_sims": 20000,
+      "n_looks": 50,
+      "effect": 0.1,
+      "obf_bounds": [
+        4.382612702884385,
+        3.09972747758988,
+        2.5533549726171345,
+        2.253847898334322,
+        2.063501103569256
+      ]
+    },
+    "null_estimated_variance": {
+      "fixed": 0.062,
+      "naive_peeking": 0.297,
+      "msprt": 0.022,
+      "obf": 0.054,
+      "msprt_mean_stop_fraction": 0.32575757575757575,
+      "n_sims": 1000,
+      "n_looks": 30,
+      "effect": 0.0,
+      "obf_bounds": [
+        4.382612702884385,
+        3.09972747758988,
+        2.5533549726171345,
+        2.253847898334322,
+        2.063501103569256
+      ]
+    },
+    "obf_bounds_5_looks": [
+      4.382612702884385,
+      3.09972747758988,
+      2.5533549726171345,
+      2.253847898334322,
+      2.063501103569256
+    ]
+  },
+  "cuped": {
+    "reps": 500,
+    "n_per_dataset": 2000,
+    "true_effect": 0.4,
+    "corr_x_y": 0.5,
+    "mean_estimate_unadjusted": 0.40133730582396593,
+    "mean_estimate_cuped": 0.40473734404040407,
+    "mc_se_of_mean_cuped": 0.003422439853404187,
+    "variance_ratio_cuped_over_unadjusted": 0.735056585769905,
+    "theory_1_minus_rho2": 0.75,
+    "cupac": {
+      "datasets": 8,
+      "n": 8000,
+      "variance_reduction_pre_period_cuped": 0.25226405942936325,
+      "variance_reduction_cupac_gbm": 0.4558524275091317
+    }
+  },
+  "calibration": {
+    "type_i_welch": {
+      "seed": 31,
+      "sims": 5000,
+      "n_per_arm": 200,
+      "rejection_rate": 0.0472
+    },
+    "power": {
+      "seed": 32,
+      "sims": 3000,
+      "delta": 0.5,
+      "sd": 3.0,
+      "n_per_arm_from_calculator": 566,
+      "target_power": 0.8,
+      "simulated_power": 0.8016666666666666
+    },
+    "delta_method_coverage": {
+      "seed": 33,
+      "reps": 2000,
+      "users_per_arm": 1500,
+      "nominal": 0.95,
+      "coverage": 0.9485
+    },
+    "sample_size_examples": {
+      "means_d0.2_sd1": 393,
+      "means_d0.2_sd1_cuped_r2_0.25": 295,
+      "props_10_to_12pct": 3841
+    }
+  },
+  "srm": {
+    "alpha_threshold": 0.001,
+    "n": 40000,
+    "reps": 200,
+    "flag_rate": {
+      "drop_0.0": 0.0,
+      "drop_0.01": 0.01,
+      "drop_0.02": 0.08,
+      "drop_0.05": 0.94
+    }
+  },
+  "readout": {
+    "seed": 7,
+    "n": 40000,
+    "true_primary_effect_approx": 0.275,
+    "clean": {
+      "status": "ship_candidate",
+      "srm_p": 0.4179401757432031,
+      "primary_estimate": 0.3174769086624938,
+      "primary_ci": [
+        0.2495591829632318,
+        0.3853946343617558
+      ],
+      "variance_reduction": 0.24659373637334248,
+      "mSPRT_rejected_at_n": 4000,
+      "segments_significant": [
+        "A",
+        "B"
+      ],
+      "cochran_q_p": 4.964622217298509e-07
+    },
+    "srm_bug_3pct_treated_lost": {
+      "status": "invalid_srm",
+      "srm_p": 0.00012880752395926382
+    }
+  }
+}
