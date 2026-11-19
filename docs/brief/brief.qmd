@@ -1,4 +1,6 @@
 ---
+bibliography: references.bib
+bibliographystyle: apa
 linkcolor: "#1f4e9e"
 format:
   typst:
@@ -12,6 +14,8 @@ format:
 
 ```{=typst}
 #set text(hyphenate: false)
+#set bibliography(title: "References")
+#show bibliography: set par(justify: false)
 // Three-rule tables (top, below header, bottom) and bold "Figure N" / "Table N" labels
 #set table.hline(stroke: 0.6pt)
 #show table: it => box(stroke: (top: 1pt, bottom: 1pt), it)
@@ -25,6 +29,7 @@ format:
 #let glance(body) = block(fill: rgb("#eef3fb"), stroke: (left: 3pt + rgb("#1f4e9e")), inset: 10pt, radius: 2pt, width: 100%, body)
 // Header: red title, subtitle, author, repository link
 #align(center)[
+  #set par(justify: false)
   #text(size: 17pt, weight: "bold", fill: rgb("#b91c1c"))[Online Experimentation Platform]
   #v(0.5em)
   #text(size: 12pt, weight: "bold")[Design, monitor and analyse A/B tests without fooling yourself: peeking-safe, variance-reduced, validated on simulated ground truth]
@@ -32,6 +37,8 @@ format:
   #text(size: 11pt)[Reagan Kesseku, Ph.D.]
   #linebreak()
   #text(size: 10pt)[#link("https://github.com/rkesseku/experimentation-platform")[github.com/rkesseku/experimentation-platform]]
+  #v(0.45em)
+  #text(size: 9.5pt)[#emph[Keywords:] A/B testing; online controlled experiments; CUPED; sequential testing; sample ratio mismatch]
 ]
 #v(0.5em)
 ```
@@ -79,13 +86,13 @@ Each statistical concern lives in one module with its own tests; the simulator d
 
 **Sample size with covariates.** For a mean difference $\delta$ with standard deviation $\sigma$ and covariate $R^2 = r$, the per-arm size scales by $(1 - r)$, so a pre-period covariate that explains 25% of variance shrinks the required sample by a quarter. Proportions use the pooled-null/unpooled-alternative formula, and minimum detectable effect solves the exact power function. *Why:* it makes the payoff of variance reduction visible at planning time, not only after the fact.
 
-**Hash-based assignment and SRM.** The unit's position $u$ (the first 8 bytes of SHA-256 of "salt:unit", divided by $2^{64}$) is compared with cumulative variant weights. A *layer* gives each experiment a disjoint range of 10,000 buckets, enabling mutual exclusion; different layer salts give independent experiments. SRM is a chi-square goodness-of-fit test flagged at $p < 0.001$. *Why:* deterministic hashing needs no assignment table and is reproducible; the strict threshold keeps false alarms near zero.
+**Hash-based assignment and SRM.** The unit's position $u$ (the first 8 bytes of SHA-256 of "salt:unit", divided by $2^{64}$) is compared with cumulative variant weights. A *layer* gives each experiment a disjoint range of 10,000 buckets, enabling mutual exclusion; different layer salts give independent experiments. SRM [@fabijan2019] is a chi-square goodness-of-fit test flagged at $p < 0.001$. *Why:* deterministic hashing needs no assignment table and is reproducible; the strict threshold keeps false alarms near zero.
 
-**Effect estimation.** Welch's t-test (Satterthwaite degrees of freedom) and a two-proportion z-test cover the basics. Ratio metrics $R = \sum N / \sum D$ use the delta-method variance, which accounts for the correlation between numerator and denominator within a user. *CUPED* adjusts the outcome by $\theta (X - \bar{X})$ with a pre-experiment covariate $X$; because $X$ is measured before treatment it adds no bias, and variance shrinks by roughly $\rho^2$. *CUPAC* replaces $X$ with a cross-fitted gradient-boosting prediction from several pre-period features, capturing non-linear structure; cross-fitting prevents the model from leaking the outcome. Bootstrap (percentile, BCa) is available for heavy tails.
+**Effect estimation.** Welch's t-test (Satterthwaite degrees of freedom) and a two-proportion z-test cover the basics. Ratio metrics $R = \sum N / \sum D$ use the delta-method variance [@deng2018delta], which accounts for the correlation between numerator and denominator within a user. *CUPED* [@deng2013cuped] adjusts the outcome by $\theta (X - \bar{X})$ with a pre-experiment covariate $X$; because $X$ is measured before treatment it adds no bias, and variance shrinks by roughly $\rho^2$. *CUPAC* replaces $X$ with a cross-fitted gradient-boosting prediction from several pre-period features, capturing non-linear structure; cross-fitting prevents the model from leaking the outcome. Bootstrap (percentile, BCa) is available for heavy tails.
 
-**Multiplicity and guardrails.** Holm (family-wise error) or Benjamini-Hochberg (false discovery rate) is applied across primary and secondary metrics. Guardrails (for example latency) use one-sided non-inferiority tests against a margin; claiming "all guardrails pass" is an intersection-union statement and needs no further correction.
+**Multiplicity and guardrails.** Holm's procedure for the family-wise error rate [@holm1979] or the Benjamini-Hochberg procedure for the false discovery rate [@benjamini1995] is applied across primary and secondary metrics. Guardrails (for example latency) use one-sided non-inferiority tests against a margin; claiming "all guardrails pass" is an intersection-union statement and needs no further correction.
 
-**Sequential monitoring.** Two complementary tools are provided. The *mSPRT* places a normal mixing prior on the effect; the resulting likelihood ratio is a non-negative martingale under the null, so by Ville's inequality the probability it ever reaches $1/\alpha$ is at most $\alpha$. This yields always-valid p-values and a confidence sequence that stays valid however often it is checked. For a planned number of looks, *Lan-DeMets O'Brien-Fleming* boundaries are computed by numerical integration of the surviving Brownian-motion density: demanding early on (z = 4.38 at 20% of the data) and close to the fixed-horizon value at the end (z = 2.06). *Why both:* mSPRT supports continuous peeking at a cost in power; group-sequential designs are more powerful when looks are planned.
+**Sequential monitoring.** Two complementary tools are provided. The *mSPRT* [@johari2017] places a normal mixing prior on the effect; the resulting likelihood ratio is a non-negative martingale under the null, so by Ville's inequality the probability it ever reaches $1/\alpha$ is at most $\alpha$. This yields always-valid p-values and a confidence sequence [@howard2021] that stays valid however often it is checked. For a planned number of looks, *Lan-DeMets O'Brien-Fleming* boundaries are computed by numerical integration of the surviving Brownian-motion density: demanding early on (z = 4.38 at 20% of the data) and close to the fixed-horizon value at the end (z = 2.06). *Why both:* mSPRT supports continuous peeking at a cost in power; group-sequential designs are more powerful when looks are planned.
 
 **Heterogeneity.** Per-segment Welch effects are multiplicity-corrected and accompanied by Cochran's Q omnibus test. A cross-fitted T-learner estimates conditional effects, and units are grouped into out-of-fold effect quantiles whose *realised* effect is measured with an ordinary randomised comparison, which shows whether the model found real heterogeneity rather than noise.
 
